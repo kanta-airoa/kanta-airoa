@@ -2,11 +2,11 @@
 kanta-airoa/kanta-airoa is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 --->
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,17,27&height=220&section=header&text=KanAIRoA&fontSize=72&fontColor=ffffff&animation=twinkling&fontAlignY=35&desc=LLM%20%C3%97%20HPC%20%C3%97%20Robotics&descSize=22&descAlignY=58" />
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,17,27&height=180&section=header&animation=twinkling" />
 
 <p align="center">
   <a href="https://github.com/kanta-airoa">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=26&duration=3000&pause=800&color=F75C7E&center=true&vCenter=true&width=600&lines=Hi+there%2C+I'm+Kanta+Osuga+%F0%9F%91%8B;Training+LLMs+on+big+clusters+%F0%9F%94%A5;Slurm+%2F+CUDA+%2F+DeepSpeed+wrangler+%E2%9A%A1;Welcome+to+my+profile!+%E2%9C%A8" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=26&duration=3000&pause=800&color=F75C7E&center=true&vCenter=true&width=600&lines=Welcome!+%F0%9F%91%8B;Have+a+nice+day+%F0%9F%8C%B8;Enjoy+the+stats+below+%F0%9F%93%8A" alt="Typing SVG" />
   </a>
 </p>
 
