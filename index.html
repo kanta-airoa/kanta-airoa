@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KanAIRoA ✨ Kanta Osuga</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg1: #0d0221;
+    --bg2: #190a3d;
+    --accent: #f75c7e;
+    --accent2: #7c4dff;
+    --accent3: #00e5ff;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Segoe UI", "Hiragino Sans", system-ui, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), #051937);
+    background-size: 300% 300%;
+    animation: bgShift 18s ease infinite;
+    color: #fff;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  @keyframes bgShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  canvas#fx {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  canvas#stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+    gap: 2.2rem;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3), var(--accent));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: hueFlow 6s linear infinite;
+    filter: drop-shadow(0 0 24px rgba(247, 92, 126, 0.45));
+  }
+
+  @keyframes hueFlow {
+    to { background-position: 300% 0; }
+  }
+
+  .tagline {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: #cfc3ff;
+    min-height: 1.6em;
+  }
+
+  .tagline::after {
+    content: "▌";
+    animation: blink 1s steps(1) infinite;
+    color: var(--accent3);
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    justify-content: center;
+    max-width: 900px;
+  }
+
+  .card {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    padding: 1.4rem 1.8rem;
+    min-width: 230px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-8px) scale(1.03);
+    border-color: var(--accent);
+    box-shadow: 0 12px 40px rgba(247, 92, 126, 0.35);
+  }
+
+  .card .icon { font-size: 2rem; }
+  .card h2 { font-size: 1.15rem; margin-top: 0.5rem; }
+  .card p { font-size: 0.85rem; color: #b8aee0; margin-top: 0.35rem; }
+
+  .hint {
+    color: #8f83bd;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 1.5rem;
+    color: #6f639e;
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="fx"></canvas>
+
+<main>
+  <h1>KanAIRoA</h1>
+  <div class="tagline"><span id="type"></span></div>
+
+  <div class="cards">
+    <a class="card" href="https://github.com/kanta-airoa">
+      <div class="icon">🐙</div>
+      <h2>GitHub</h2>
+      <p>@kanta-airoa — repos, stats &amp; the contribution snake</p>
+    </a>
+    <a class="card" href="https://github.com/kanta-airoa?tab=repositories">
+      <div class="icon">🔥</div>
+      <h2>LLM × HPC</h2>
+      <p>Megatron-DeepSpeed, Slurm tooling, tokenizer training</p>
+    </a>
+    <a class="card" href="https://github.com/kanta-airoa/kanta-airoa">
+      <div class="icon">✨</div>
+      <h2>This page's source</h2>
+      <p>One HTML file, zero libraries — view the magic</p>
+    </a>
+  </div>
+
+  <p class="hint">🖱️ move your cursor · click anywhere for fireworks</p>
+</main>
+
+<footer>© 2026 Kanta Osuga (KanAIRoA) — built with sparkles</footer>
+
+<script>
+(() => {
+  // ---------- starfield background ----------
+  const starCanvas = document.getElementById("stars");
+  const sctx = starCanvas.getContext("2d");
+  let stars = [];
+
+  function resizeStars() {
+    starCanvas.width = innerWidth;
+    starCanvas.height = innerHeight;
+    stars = Array.from({ length: Math.min(220, innerWidth / 6) }, () => ({
+      x: Math.random() * starCanvas.width,
+      y: Math.random() * starCanvas.height,
+      r: Math.random() * 1.6 + 0.3,
+      tw: Math.random() * Math.PI * 2,
+      sp: Math.random() * 0.25 + 0.05,
+    }));
+  }
+  addEventListener("resize", resizeStars);
+  resizeStars();
+
+  function drawStars(t) {
+    sctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+    for (const s of stars) {
+      s.y -= s.sp;
+      if (s.y < -2) s.y = starCanvas.height + 2;
+      const a = 0.4 + 0.6 * Math.abs(Math.sin(t / 900 + s.tw));
+      sctx.beginPath();
+      sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      sctx.fillStyle = `rgba(255,255,255,${a})`;
+      sctx.fill();
+    }
+    requestAnimationFrame(drawStars);
+  }
+  requestAnimationFrame(drawStars);
+
+  // ---------- cursor trail + fireworks ----------
+  const fx = document.getElementById("fx");
+  const ctx = fx.getContext("2d");
+  const particles = [];
+  let hue = 0;
+
+  function resizeFx() {
+    fx.width = innerWidth;
+    fx.height = innerHeight;
+  }
+  addEventListener("resize", resizeFx);
+  resizeFx();
+
+  function spawnTrail(x, y) {
+    hue = (hue + 4) % 360;
+    for (let i = 0; i < 3; i++) {
+      particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 1.6,
+        vy: (Math.random() - 0.5) * 1.6 - 0.4,
+        life: 1,
+        decay: 0.02 + Math.random() * 0.02,
+        r: Math.random() * 3.5 + 1.5,
+        hue: hue + Math.random() * 40 - 20,
+        spark: Math.random() < 0.15,
+      });
+    }
+  }
+
+  function burst(x, y) {
+    for (let i = 0; i < 60; i++) {
+      const ang = (Math.PI * 2 * i) / 60;
+      const sp = Math.random() * 6 + 2;
+      particles.push({
+        x, y,
+        vx: Math.cos(ang) * sp,
+        vy: Math.sin(ang) * sp,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.015,
+        r: Math.random() * 3 + 1.5,
+        hue: hue + Math.random() * 90,
+        spark: true,
+        gravity: 0.06,
+      });
+    }
+  }
+
+  let lastX = null, lastY = null;
+  addEventListener("pointermove", (e) => {
+    // interpolate so fast swipes leave a continuous ribbon
+    if (lastX !== null) {
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      const steps = Math.min(8, Math.hypot(dx, dy) / 8 | 0) + 1;
+      for (let i = 1; i <= steps; i++) {
+        spawnTrail(lastX + (dx * i) / steps, lastY + (dy * i) / steps);
+      }
+    } else {
+      spawnTrail(e.clientX, e.clientY);
+    }
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+  addEventListener("pointerdown", (e) => burst(e.clientX, e.clientY));
+
+  function tick() {
+    ctx.clearRect(0, 0, fx.width, fx.height);
+    ctx.globalCompositeOperation = "lighter";
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.gravity) p.vy += p.gravity;
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      const alpha = p.life;
+      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+      glow.addColorStop(0, `hsla(${p.hue},100%,70%,${alpha})`);
+      glow.addColorStop(1, `hsla(${p.hue},100%,50%,0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (p.spark) {
+        ctx.strokeStyle = `hsla(${p.hue},100%,85%,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p.x - p.r * 2, p.y);
+        ctx.lineTo(p.x + p.r * 2, p.y);
+        ctx.moveTo(p.x, p.y - p.r * 2);
+        ctx.lineTo(p.x, p.y + p.r * 2);
+        ctx.stroke();
+      }
+    }
+    ctx.globalCompositeOperation = "source-over";
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ---------- typing tagline ----------
+  const lines = [
+    "Training LLMs on big clusters 🔥",
+    "Slurm / CUDA / DeepSpeed wrangler ⚡",
+    "LLM × HPC × Robotics 🤖",
+    "ようこそ！ Welcome to my profile ✨",
+  ];
+  const el = document.getElementById("type");
+  let li = 0, ci = 0, deleting = false;
+
+  function typeLoop() {
+    const line = lines[li];
+    el.textContent = line.slice(0, ci);
+    let delay = deleting ? 30 : 65;
+    if (!deleting && ci === line.length) { deleting = true; delay = 1800; }
+    else if (deleting && ci === 0) { deleting = false; li = (li + 1) % lines.length; delay = 400; }
+    else ci += deleting ? -1 : 1;
+    setTimeout(typeLoop, delay);
+  }
+  typeLoop();
+})();
+</script>
+</body>
+</html>
